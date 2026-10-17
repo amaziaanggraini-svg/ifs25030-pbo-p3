@@ -92,7 +92,7 @@ public class FinanceView {
         }
 
         try {
-            SortOption option = InputUtil.parseChoice(input, SortOption.values(), "Pilihan");
+            SortOption option = SortOption.fromCode(InputUtil.parseInt(input, "Pilihan"));
             presenter.showSortedTransactions(financeUseCase.sortTransactions(option));
         } catch (ValidationException e) {
             presenter.showError(e.getMessage());

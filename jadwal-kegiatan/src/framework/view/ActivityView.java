@@ -118,7 +118,7 @@ public class ActivityView {
         }
 
         try {
-            SortOption option = InputUtil.parseChoice(input, SortOption.values(), "Pilihan");
+            SortOption option = SortOption.fromCode(InputUtil.parseInt(input, "Pilihan"));
             presenter.showSortedActivities(activityUseCase.sortActivities(option));
         } catch (ValidationException e) {
             presenter.showError(e.getMessage());

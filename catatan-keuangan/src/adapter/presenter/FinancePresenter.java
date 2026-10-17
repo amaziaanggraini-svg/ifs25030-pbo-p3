@@ -64,8 +64,8 @@ public class FinancePresenter {
 
     public void showSortMenu() {
         SortOption[] options = SortOption.values();
-        for (int index = 0; index < options.length; index++) {
-            System.out.printf("%d. %s%n", index + 1, sortLabel(options[index]));
+        for (SortOption option : options) {
+            System.out.printf("%d. %s%n", option.code(), sortLabel(option));
         }
         System.out.println("x. Batal");
     }

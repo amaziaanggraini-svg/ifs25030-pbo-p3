@@ -40,7 +40,13 @@ public abstract class InMemoryRepository<T, ID> implements IRepository<T, ID> {
 
     @Override
     public void update(T entity) {
-        // Disimpan by-reference di memori
+        ID id = idExtractor.apply(entity);
+        for (int index = 0; index < data.size(); index++) {
+            if (idExtractor.apply(data.get(index)).equals(id)) {
+                data.set(index, entity);
+                return;
+            }
+        }
     }
 
     @Override

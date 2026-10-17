@@ -1,25 +1,43 @@
 package domain.entity;
 
+import domain.exception.ValidationException;
 import java.util.Comparator;
 
 public enum SortOption {
-    DAY(Comparator.comparingInt((Activity a) -> getDayIndex(a.getDay()))
+    DAY(1, Comparator.comparingInt((Activity a) -> getDayIndex(a.getDay()))
             .thenComparing(Activity::getTime, Comparator.nullsLast(Comparator.naturalOrder()))),
-    TIME(Comparator.comparingInt((Activity a) -> parseTimeMinutes(a.getTime()))
+    TIME(2, Comparator.comparingInt((Activity a) -> parseTimeMinutes(a.getTime()))
             .thenComparingInt(Activity::getId)),
-    TITLE_ASC(Comparator.comparing(Activity::getTitle, String.CASE_INSENSITIVE_ORDER)
+    TITLE_ASC(3, Comparator.comparing(Activity::getTitle, String.CASE_INSENSITIVE_ORDER)
             .thenComparingInt(Activity::getId)),
-    TITLE_DESC(Comparator.comparing(Activity::getTitle, String.CASE_INSENSITIVE_ORDER).reversed()
+    TITLE_DESC(4, Comparator.comparing(Activity::getTitle, String.CASE_INSENSITIVE_ORDER).reversed()
             .thenComparingInt(Activity::getId));
 
+    private final int code;
     private final Comparator<Activity> comparator;
 
-    SortOption(Comparator<Activity> comparator) {
+    SortOption(int code, Comparator<Activity> comparator) {
+        this.code = code;
         this.comparator = comparator;
+    }
+
+    /** Nomor pilihan yang ditampilkan di menu pengurutan. */
+    public int code() {
+        return code;
     }
 
     public Comparator<Activity> comparator() {
         return comparator;
+    }
+
+    /** Mencari opsi berdasarkan nomor pilihan; melempar ValidationException jika tidak ada. */
+    public static SortOption fromCode(int code) throws ValidationException {
+        for (SortOption option : values()) {
+            if (option.code == code) {
+                return option;
+            }
+        }
+        throw new ValidationException("Pilihan tidak valid");
     }
 
     private static int getDayIndex(String day) {

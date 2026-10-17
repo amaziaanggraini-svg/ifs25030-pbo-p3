@@ -25,7 +25,7 @@ public class FinanceUseCase {
             throw new ValidationException("Keterangan transaksi tidak boleh kosong");
         }
         if (amount <= 0) {
-            throw new ValidationException("Jumlah tidak valid!");
+            throw new ValidationException("Jumlah tidak valid");
         }
         return transactionRepository.save(description, amount, type);
     }

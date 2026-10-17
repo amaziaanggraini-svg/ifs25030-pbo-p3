@@ -8,6 +8,9 @@ public class InputUtil {
 
     public static String input(String info) {
         System.out.print(info + " : ");
+        if (!scanner.hasNextLine()) {
+            return "x";
+        }
         return scanner.nextLine();
     }
 
@@ -33,16 +36,5 @@ public class InputUtil {
         } catch (NumberFormatException e) {
             throw new ValidationException(fieldName + " tidak valid");
         }
-    }
-
-    public static <E extends Enum<E>> E parseChoice(String value, E[] enumValues, String fieldName) throws ValidationException {
-        try {
-            int index = Integer.parseInt(value.trim()) - 1;
-            if (index >= 0 && index < enumValues.length) {
-                return enumValues[index];
-            }
-        } catch (NumberFormatException ignored) {
-        }
-        throw new ValidationException("Pilihan tidak valid");
     }
 }
