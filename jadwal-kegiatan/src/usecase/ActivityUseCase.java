@@ -53,7 +53,7 @@ public class ActivityUseCase {
     }
 
     public List<Activity> searchActivities(String keyword) {
-        String lowerKeyword = keyword.toLowerCase();
+        String lowerKeyword = keyword == null ? "" : keyword.toLowerCase();
         return activityRepository.findBy(a -> a.getTitle().toLowerCase().contains(lowerKeyword));
     }
 

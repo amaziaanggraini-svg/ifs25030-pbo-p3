@@ -36,7 +36,7 @@ public class GuestUseCase {
     }
 
     public List<Guest> searchGuests(String keyword) {
-        String lowerKeyword = keyword.toLowerCase();
+        String lowerKeyword = keyword == null ? "" : keyword.toLowerCase();
         return guestRepository.findBy(g -> g.getName().toLowerCase().contains(lowerKeyword));
     }
 }

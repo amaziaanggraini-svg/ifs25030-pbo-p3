@@ -53,7 +53,7 @@ public class ContactUseCase {
     }
 
     public List<Contact> searchContacts(String keyword) {
-        String lowerKeyword = keyword.toLowerCase();
+        String lowerKeyword = keyword == null ? "" : keyword.toLowerCase();
         return contactRepository.findBy(c -> c.getName().toLowerCase().contains(lowerKeyword));
     }
 

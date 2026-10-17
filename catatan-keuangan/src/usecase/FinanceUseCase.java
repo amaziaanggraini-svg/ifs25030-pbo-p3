@@ -38,7 +38,7 @@ public class FinanceUseCase {
     }
 
     public List<Transaction> searchTransactions(String keyword) {
-        String lowerKeyword = keyword.toLowerCase();
+        String lowerKeyword = keyword == null ? "" : keyword.toLowerCase();
         return transactionRepository.findBy(t -> t.getDescription().toLowerCase().contains(lowerKeyword));
     }
 
