@@ -1,0 +1,14 @@
+package domain.exception;
+
+public class EntityNotFoundException extends DomainException {
+    private final int id;
+
+    public EntityNotFoundException(int id) {
+        super("Kegiatan dengan ID " + id + " tidak ditemukan");
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+}
