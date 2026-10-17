@@ -48,8 +48,8 @@ public class ActivityPresenter {
     public void showSortMenu() {
         System.out.println("Pilihan Pengurutan:");
         SortOption[] options = SortOption.values();
-        for (SortOption option : options) {
-            System.out.printf("%d. %s%n", option.code(), sortLabel(option));
+        for (int index = 0; index < options.length; index++) {
+            System.out.printf("%d. %s%n", index + 1, sortLabel(options[index]));
         }
         System.out.println("x. Batal");
     }

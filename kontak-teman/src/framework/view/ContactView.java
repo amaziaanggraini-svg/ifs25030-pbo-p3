@@ -78,7 +78,7 @@ public class ContactView {
 
         int id;
         try {
-            id = InputUtil.parseInt(rawId, "ID");
+            id = InputUtil.parseId(rawId);
         } catch (ValidationException e) {
             presenter.showError(e.getMessage());
             return;
@@ -118,7 +118,7 @@ public class ContactView {
         }
 
         try {
-            SortOption option = SortOption.fromCode(InputUtil.parseInt(input, "Pilihan"));
+            SortOption option = InputUtil.parseChoice(input, SortOption.values(), "Pilihan");
             presenter.showSortedContacts(contactUseCase.sortContacts(option));
         } catch (ValidationException e) {
             presenter.showError(e.getMessage());
@@ -134,7 +134,7 @@ public class ContactView {
         }
 
         try {
-            int id = InputUtil.parseInt(rawId, "ID");
+            int id = InputUtil.parseId(rawId);
             contactUseCase.removeContact(id);
             presenter.showRemoveSuccess();
         } catch (ValidationException e) {

@@ -39,9 +39,15 @@ public class ContactUseCase {
             throw new EntityNotFoundException(id);
         }
         Contact contact = found.get();
-        contact.changeName(name);
-        contact.changePhone(phone);
-        contact.changeEmail(email);
+        if (hasValue(name)) {
+            contact.changeName(name);
+        }
+        if (hasValue(phone)) {
+            contact.changePhone(phone);
+        }
+        if (hasValue(email)) {
+            contact.changeEmail(email);
+        }
         contactRepository.update(contact);
     }
 
@@ -53,7 +59,7 @@ public class ContactUseCase {
     }
 
     public List<Contact> searchContacts(String keyword) {
-        String lowerKeyword = keyword.toLowerCase();
+        String lowerKeyword = keyword == null ? "" : keyword.toLowerCase();
         return contactRepository.findBy(c -> c.getName().toLowerCase().contains(lowerKeyword));
     }
 
@@ -61,5 +67,10 @@ public class ContactUseCase {
         return contactRepository.findAll().stream()
                 .sorted(option.comparator())
                 .toList();
+    }
+
+    /** Field opsional: null atau kosong berarti "tidak diubah". Aturan ini hanya ada di use case. */
+    private static boolean hasValue(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 }

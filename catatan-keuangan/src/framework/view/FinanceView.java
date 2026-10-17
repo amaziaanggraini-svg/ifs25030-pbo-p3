@@ -92,7 +92,7 @@ public class FinanceView {
         }
 
         try {
-            SortOption option = SortOption.fromCode(InputUtil.parseInt(input, "Pilihan"));
+            SortOption option = InputUtil.parseChoice(input, SortOption.values(), "Pilihan");
             presenter.showSortedTransactions(financeUseCase.sortTransactions(option));
         } catch (ValidationException e) {
             presenter.showError(e.getMessage());
@@ -108,7 +108,7 @@ public class FinanceView {
         }
 
         try {
-            financeUseCase.removeTransaction(InputUtil.parseInt(rawId, "ID"));
+            financeUseCase.removeTransaction(InputUtil.parseId(rawId));
             presenter.showRemoveSuccess();
         } catch (ValidationException e) {
             presenter.showError(e.getMessage());

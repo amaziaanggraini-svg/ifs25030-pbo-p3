@@ -66,7 +66,7 @@ public class ItemUseCase {
     }
 
     public List<Item> searchItems(String keyword) {
-        String lowerKeyword = keyword.toLowerCase();
+        String lowerKeyword = keyword == null ? "" : keyword.toLowerCase();
         return itemRepository.findBy(item -> item.getName().toLowerCase().contains(lowerKeyword));
     }
 

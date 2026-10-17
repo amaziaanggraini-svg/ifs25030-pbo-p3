@@ -4,7 +4,7 @@ public class EntityNotFoundException extends DomainException {
     private final int id;
 
     public EntityNotFoundException(int id) {
-        super("Barang dengan ID " + id + " tidak ditemukan.");
+        super("Barang dengan ID " + id + " tidak ditemukan");
         this.id = id;
     }
 

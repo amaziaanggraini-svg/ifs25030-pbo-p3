@@ -30,20 +30,14 @@ public class Contact {
     }
 
     public void changeName(String name) {
-        if (name != null && !name.trim().isEmpty()) {
-            this.name = name;
-        }
+        this.name = name;
     }
 
     public void changePhone(String phone) {
-        if (phone != null && !phone.trim().isEmpty()) {
-            this.phone = phone;
-        }
+        this.phone = phone;
     }
 
     public void changeEmail(String email) {
-        if (email != null && !email.trim().isEmpty()) {
-            this.email = email;
-        }
+        this.email = email;
     }
 }

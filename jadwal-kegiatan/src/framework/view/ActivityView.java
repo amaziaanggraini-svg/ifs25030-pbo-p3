@@ -78,7 +78,7 @@ public class ActivityView {
 
         int id;
         try {
-            id = InputUtil.parseInt(rawId, "ID");
+            id = InputUtil.parseId(rawId);
         } catch (ValidationException e) {
             presenter.showError(e.getMessage());
             return;
@@ -118,7 +118,7 @@ public class ActivityView {
         }
 
         try {
-            SortOption option = SortOption.fromCode(InputUtil.parseInt(input, "Pilihan"));
+            SortOption option = InputUtil.parseChoice(input, SortOption.values(), "Pilihan");
             presenter.showSortedActivities(activityUseCase.sortActivities(option));
         } catch (ValidationException e) {
             presenter.showError(e.getMessage());
@@ -134,7 +134,7 @@ public class ActivityView {
         }
 
         try {
-            int id = InputUtil.parseInt(rawId, "ID");
+            int id = InputUtil.parseId(rawId);
             activityUseCase.removeActivity(id);
             presenter.showRemoveSuccess();
         } catch (ValidationException e) {
