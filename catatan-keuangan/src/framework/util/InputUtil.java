@@ -4,8 +4,9 @@ import domain.exception.ValidationException;
 import java.util.Scanner;
 
 /**
- * Utility untuk membaca input dari keyboard.
+ * Utility untuk membaca dan mem-parsing input dari keyboard.
  * Berada di layer framework karena bergantung pada {@link System#in}.
+ * Seluruh parsing angka dipusatkan di sini agar view tidak menduplikasi logika.
  */
 public class InputUtil {
     /** Scanner bersama untuk seluruh aplikasi (satu instance cukup). */
@@ -25,7 +26,7 @@ public class InputUtil {
         return value != null && value.trim().equalsIgnoreCase("x");
     }
 
-    /** Mengonversi string menjadi int; melempar ValidationException jika tidak valid. */
+    /** Mengonversi string menjadi int; melempar ValidationException ("[field] tidak valid") jika bukan angka. */
     public static int parseInt(String value, String fieldName) throws ValidationException {
         try {
             return Integer.parseInt(value.trim());
@@ -34,8 +35,17 @@ public class InputUtil {
         }
     }
 
-    /** Mengonversi string menjadi long positif; melempar ValidationException jika tidak valid. */
-    public static long parseLong(String value, String fieldName) throws ValidationException {
+    /** Mengonversi string menjadi int positif (> 0); melempar ValidationException jika bukan angka atau <= 0. */
+    public static int parsePositiveInt(String value, String fieldName) throws ValidationException {
+        int parsed = parseInt(value, fieldName);
+        if (parsed <= 0) {
+            throw new ValidationException(fieldName + " tidak valid");
+        }
+        return parsed;
+    }
+
+    /** Mengonversi string menjadi long positif (> 0); melempar ValidationException jika bukan angka atau <= 0. */
+    public static long parsePositiveLong(String value, String fieldName) throws ValidationException {
         try {
             long parsed = Long.parseLong(value.trim());
             if (parsed <= 0) {
@@ -55,6 +65,7 @@ public class InputUtil {
                 return enumValues[index];
             }
         } catch (NumberFormatException ignored) {
+            // diabaikan: input non-angka diperlakukan sama dengan angka di luar rentang
         }
         throw new ValidationException("Pilihan tidak valid");
     }

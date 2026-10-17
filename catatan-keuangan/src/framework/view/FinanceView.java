@@ -63,7 +63,7 @@ public class FinanceView {
         }
 
         try {
-            long amount = InputUtil.parseLong(rawAmount, "Jumlah");
+            long amount = InputUtil.parsePositiveLong(rawAmount, "Jumlah");
             presenter.showAddSuccess(financeUseCase.addTransaction(description, amount, type));
         } catch (ValidationException e) {
             presenter.showError(e.getMessage());
@@ -86,7 +86,7 @@ public class FinanceView {
         presenter.showSortMenu();
 
         String input = InputUtil.input("Pilih");
-        presenter.showBlankLine(); 
+        presenter.showBlankLine();
         if (InputUtil.isCancel(input)) {
             return;
         }

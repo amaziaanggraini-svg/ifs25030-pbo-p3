@@ -33,16 +33,30 @@ public class ActivityUseCase {
         return activityRepository.save(title, day, time);
     }
 
+    /**
+     * Mengubah kegiatan. Parameter yang null atau kosong berarti field tersebut
+     * tidak diubah (update parsial); aturan ini hanya ditentukan di sini.
+     */
     public void updateActivity(int id, String title, String day, String time) throws EntityNotFoundException {
         Optional<Activity> found = activityRepository.findById(id);
         if (found.isEmpty()) {
             throw new EntityNotFoundException(id);
         }
         Activity activity = found.get();
-        activity.changeTitle(title);
-        activity.changeDay(day);
-        activity.changeTime(time);
+        if (hasValue(title)) {
+            activity.changeTitle(title);
+        }
+        if (hasValue(day)) {
+            activity.changeDay(day);
+        }
+        if (hasValue(time)) {
+            activity.changeTime(time);
+        }
         activityRepository.update(activity);
+    }
+
+    private boolean hasValue(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 
     public void removeActivity(int id) throws EntityNotFoundException {

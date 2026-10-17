@@ -85,22 +85,13 @@ public class GuestView {
         }
 
         try {
-            int id = parseId(rawId);
+            int id = InputUtil.parseInt(rawId, "ID");
             guestUseCase.removeGuest(id);
             presenter.showRemoveSuccess();
         } catch (ValidationException e) {
             presenter.showInvalidId();
         } catch (EntityNotFoundException e) {
             presenter.showRemoveFailed(e.getId());
-        }
-    }
-
-    /** Mengonversi string menjadi ID; melempar ValidationException jika bukan angka. */
-    private int parseId(String value) throws ValidationException {
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            throw new ValidationException("ID harus berupa angka numerik");
         }
     }
 }

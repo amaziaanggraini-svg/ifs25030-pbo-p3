@@ -33,16 +33,30 @@ public class ContactUseCase {
         return contactRepository.save(name, phone, email);
     }
 
+    /**
+     * Mengubah kontak. Parameter yang null atau kosong berarti field tersebut
+     * tidak diubah (update parsial); aturan ini hanya ditentukan di sini.
+     */
     public void updateContact(int id, String name, String phone, String email) throws EntityNotFoundException {
         Optional<Contact> found = contactRepository.findById(id);
         if (found.isEmpty()) {
             throw new EntityNotFoundException(id);
         }
         Contact contact = found.get();
-        contact.changeName(name);
-        contact.changePhone(phone);
-        contact.changeEmail(email);
+        if (hasValue(name)) {
+            contact.changeName(name);
+        }
+        if (hasValue(phone)) {
+            contact.changePhone(phone);
+        }
+        if (hasValue(email)) {
+            contact.changeEmail(email);
+        }
         contactRepository.update(contact);
+    }
+
+    private boolean hasValue(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 
     public void removeContact(int id) throws EntityNotFoundException {

@@ -57,7 +57,7 @@ public class ItemView {
         // Jumlah divalidasi segera, sebelum menanyakan kategori
         int quantity;
         try {
-            quantity = parseQuantity(InputUtil.input("Jumlah"));
+            quantity = InputUtil.parsePositiveInt(InputUtil.input("Jumlah"), "Jumlah stok");
         } catch (ValidationException e) {
             presenter.showInvalidQuantity();
             return;
@@ -87,7 +87,7 @@ public class ItemView {
         // ID divalidasi segera, sebelum menanyakan jumlah baru
         int id;
         try {
-            id = parseId(rawId);
+            id = InputUtil.parseInt(rawId, "ID");
         } catch (ValidationException e) {
             presenter.showInvalidId();
             return;
@@ -97,7 +97,7 @@ public class ItemView {
         // null berarti stok tidak diubah
         Integer quantity;
         try {
-            quantity = rawQty.isBlank() ? null : parseQuantity(rawQty);
+            quantity = rawQty.isBlank() ? null : InputUtil.parsePositiveInt(rawQty, "Jumlah stok");
         } catch (ValidationException e) {
             presenter.showInvalidQuantity();
             return;
@@ -151,7 +151,7 @@ public class ItemView {
         }
 
         try {
-            int id = parseId(rawId);
+            int id = InputUtil.parseInt(rawId, "ID");
             itemUseCase.removeItem(id);
             presenter.showRemoveSuccess();
         } catch (ValidationException e) {
@@ -161,29 +161,7 @@ public class ItemView {
         }
     }
 
-    // ---------- Parsing input ----------
-
-    /** Mengonversi string menjadi ID; melempar ValidationException jika bukan angka. */
-    private int parseId(String value) throws ValidationException {
-        try {
-            return Integer.parseInt(value.trim());
-        } catch (NumberFormatException e) {
-            throw new ValidationException("ID harus berupa angka numerik");
-        }
-    }
-
-    /** Mengonversi string menjadi jumlah stok (numerik dan > 0). */
-    private int parseQuantity(String value) throws ValidationException {
-        try {
-            int quantity = Integer.parseInt(value.trim());
-            if (quantity <= 0) {
-                throw new ValidationException("Jumlah stok tidak valid");
-            }
-            return quantity;
-        } catch (NumberFormatException e) {
-            throw new ValidationException("Jumlah stok tidak valid");
-        }
-    }
+    // ---------- Pemetaan pilihan ----------
 
     /** Memetakan pilihan menu (1-4) ke SortOption; null jika tidak valid. */
     private SortOption mapSortOption(String input) {
