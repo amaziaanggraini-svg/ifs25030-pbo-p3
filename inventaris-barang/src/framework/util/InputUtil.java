@@ -48,19 +48,6 @@ public final class InputUtil {
     }
 
     /**
-     * Mengonversi teks menjadi int positif (> 0).
-     *
-     * @throws ValidationException jika bukan angka bulat atau nilainya <= 0
-     */
-    public static int parsePositiveInt(String value, String fieldName) throws ValidationException {
-        int parsed = parseInt(value, fieldName);
-        if (parsed <= 0) {
-            throw new ValidationException(fieldName + " tidak valid");
-        }
-        return parsed;
-    }
-
-    /**
      * Memilih satu nilai enum berdasarkan nomor menu (dimulai dari 1).
      *
      * @param options   nilai enum sesuai urutan tampil di menu

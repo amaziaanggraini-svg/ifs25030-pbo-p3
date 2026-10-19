@@ -48,17 +48,14 @@ public final class InputUtil {
     }
 
     /**
-     * Mengonversi teks menjadi long positif (> 0).
+     * Mengonversi teks menjadi long. Hanya memeriksa format angka;
+     * aturan nilai (mis. harus positif) ditangani use case.
      *
-     * @throws ValidationException jika bukan angka bulat atau nilainya <= 0
+     * @throws ValidationException jika teks bukan angka bulat
      */
-    public static long parsePositiveLong(String value, String fieldName) throws ValidationException {
+    public static long parseLong(String value, String fieldName) throws ValidationException {
         try {
-            long parsed = Long.parseLong(value.trim());
-            if (parsed <= 0) {
-                throw new ValidationException(fieldName + " tidak valid");
-            }
-            return parsed;
+            return Long.parseLong(value.trim());
         } catch (NumberFormatException e) {
             throw new ValidationException(fieldName + " tidak valid");
         }

@@ -59,10 +59,10 @@ public class ItemView {
             return;
         }
 
-        // Jumlah divalidasi segera, sebelum menanyakan kategori
+        // Format jumlah diperiksa segera, sebelum menanyakan kategori
         int quantity;
         try {
-            quantity = InputUtil.parsePositiveInt(InputUtil.input("Jumlah"), QUANTITY_FIELD);
+            quantity = InputUtil.parseInt(InputUtil.input("Jumlah"), QUANTITY_FIELD);
         } catch (ValidationException e) {
             presenter.showError(e.getMessage());
             return;
@@ -102,7 +102,7 @@ public class ItemView {
         // null berarti stok tidak diubah
         Integer quantity;
         try {
-            quantity = rawQuantity.isBlank() ? null : InputUtil.parsePositiveInt(rawQuantity, QUANTITY_FIELD);
+            quantity = rawQuantity.isBlank() ? null : InputUtil.parseInt(rawQuantity, QUANTITY_FIELD);
         } catch (ValidationException e) {
             presenter.showError(e.getMessage());
             return;
