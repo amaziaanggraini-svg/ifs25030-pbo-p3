@@ -11,8 +11,12 @@ import usecase.ItemUseCase;
 /**
  * Tampilan konsol inventaris barang.
  * Menerima input, memanggil use case, dan menangani exception domain.
+ * Tidak berisi logika bisnis maupun format output (diserahkan ke presenter).
  */
 public class ItemView {
+
+    private static final String QUANTITY_FIELD = "Jumlah stok";
+
     private final ItemUseCase itemUseCase;
     private final ItemPresenter presenter;
 
@@ -21,6 +25,7 @@ public class ItemView {
         this.presenter = presenter;
     }
 
+    /** Menjalankan loop menu utama sampai pengguna memilih keluar. */
     public void show() {
         boolean running = true;
         while (running) {
@@ -57,9 +62,9 @@ public class ItemView {
         // Jumlah divalidasi segera, sebelum menanyakan kategori
         int quantity;
         try {
-            quantity = parseQuantity(InputUtil.input("Jumlah"));
+            quantity = InputUtil.parsePositiveInt(InputUtil.input("Jumlah"), QUANTITY_FIELD);
         } catch (ValidationException e) {
-            presenter.showInvalidQuantity();
+            presenter.showError(e.getMessage());
             return;
         }
 
@@ -87,19 +92,19 @@ public class ItemView {
         // ID divalidasi segera, sebelum menanyakan jumlah baru
         int id;
         try {
-            id = parseId(rawId);
+            id = InputUtil.parseInt(rawId, "ID");
         } catch (ValidationException e) {
-            presenter.showInvalidId();
+            presenter.showError(e.getMessage());
             return;
         }
 
-        String rawQty = InputUtil.input("Jumlah Baru (Kosongkan jika tidak ingin mengubah)");
+        String rawQuantity = InputUtil.input("Jumlah Baru (Kosongkan jika tidak ingin mengubah)");
         // null berarti stok tidak diubah
         Integer quantity;
         try {
-            quantity = rawQty.isBlank() ? null : parseQuantity(rawQty);
+            quantity = rawQuantity.isBlank() ? null : InputUtil.parsePositiveInt(rawQuantity, QUANTITY_FIELD);
         } catch (ValidationException e) {
-            presenter.showInvalidQuantity();
+            presenter.showError(e.getMessage());
             return;
         }
 
@@ -134,12 +139,12 @@ public class ItemView {
             return;
         }
 
-        SortOption option = mapSortOption(input.trim());
-        if (option == null) {
-            presenter.showInvalidSortOption();
-            return;
+        try {
+            SortOption option = InputUtil.parseChoice(input, SortOption.values(), "Pilihan");
+            presenter.showSortedItems(itemUseCase.sortItems(option));
+        } catch (ValidationException e) {
+            presenter.showError(e.getMessage());
         }
-        presenter.showSortedItems(itemUseCase.sortItems(option));
     }
 
     private void removeItem() {
@@ -151,48 +156,13 @@ public class ItemView {
         }
 
         try {
-            int id = parseId(rawId);
+            int id = InputUtil.parseInt(rawId, "ID");
             itemUseCase.removeItem(id);
             presenter.showRemoveSuccess();
         } catch (ValidationException e) {
-            presenter.showInvalidId();
+            presenter.showError(e.getMessage());
         } catch (EntityNotFoundException e) {
             presenter.showRemoveFailed(e.getId());
         }
-    }
-
-    // ---------- Parsing input ----------
-
-    /** Mengonversi string menjadi ID; melempar ValidationException jika bukan angka. */
-    private int parseId(String value) throws ValidationException {
-        try {
-            return Integer.parseInt(value.trim());
-        } catch (NumberFormatException e) {
-            throw new ValidationException("ID harus berupa angka numerik");
-        }
-    }
-
-    /** Mengonversi string menjadi jumlah stok (numerik dan > 0). */
-    private int parseQuantity(String value) throws ValidationException {
-        try {
-            int quantity = Integer.parseInt(value.trim());
-            if (quantity <= 0) {
-                throw new ValidationException("Jumlah stok tidak valid");
-            }
-            return quantity;
-        } catch (NumberFormatException e) {
-            throw new ValidationException("Jumlah stok tidak valid");
-        }
-    }
-
-    /** Memetakan pilihan menu (1-4) ke SortOption; null jika tidak valid. */
-    private SortOption mapSortOption(String input) {
-        return switch (input) {
-            case "1" -> SortOption.NAME_ASC;
-            case "2" -> SortOption.NAME_DESC;
-            case "3" -> SortOption.QUANTITY_ASC;
-            case "4" -> SortOption.QUANTITY_DESC;
-            default -> null;
-        };
     }
 }

@@ -1,11 +1,17 @@
 package framework.view;
 
 import adapter.presenter.GuestPresenter;
+import domain.entity.Guest;
 import domain.exception.EntityNotFoundException;
 import domain.exception.ValidationException;
 import framework.util.InputUtil;
 import usecase.GuestUseCase;
 
+/**
+ * Tampilan konsol buku tamu.
+ * Menerima input, memanggil use case, dan menangani exception domain.
+ * Tidak berisi logika bisnis maupun format output (diserahkan ke presenter).
+ */
 public class GuestView {
     private final GuestUseCase guestUseCase;
     private final GuestPresenter presenter;
@@ -15,15 +21,17 @@ public class GuestView {
         this.presenter = presenter;
     }
 
+    /** Menjalankan loop menu utama sampai pengguna memilih keluar. */
     public void show() {
         boolean running = true;
         while (running) {
             presenter.showGuests(guestUseCase.getAllGuests());
-            printMenu();
-            String input = InputUtil.input("Pilih");
-            System.out.println();
+            presenter.showMenu();
 
-            switch (input) {
+            String choice = InputUtil.input("Pilih");
+            presenter.showBlankLine();
+
+            switch (choice) {
                 case "1" -> registerGuest();
                 case "2" -> searchGuest();
                 case "3" -> removeGuest();
@@ -32,70 +40,59 @@ public class GuestView {
             }
 
             if (running) {
-                System.out.println();
+                presenter.showBlankLine();
             }
         }
     }
 
-    private void printMenu() {
-        System.out.println("Menu:");
-        System.out.println("1. Daftarkan");
-        System.out.println("2. Cari");
-        System.out.println("3. Hapus");
-        System.out.println("x. Keluar");
-    }
-
     private void registerGuest() {
-        System.out.println("[Mendaftarkan Tamu]");
+        presenter.showSectionTitle("Mendaftarkan Tamu");
+
         String name = InputUtil.input("Nama (x Jika Batal)");
-        if (name.equals("x")) {
+        if (InputUtil.isCancel(name)) {
             return;
         }
 
         String purpose = InputUtil.input("Tujuan Kunjungan (x Jika Batal)");
-        if (purpose.equals("x")) {
+        if (InputUtil.isCancel(purpose)) {
             return;
         }
 
         try {
-            var guest = guestUseCase.registerGuest(name, purpose);
+            Guest guest = guestUseCase.registerGuest(name, purpose);
             presenter.showAddSuccess(guest);
         } catch (ValidationException e) {
-            System.out.println("[!] " + e.getMessage() + "!");
+            presenter.showError(e.getMessage());
         }
     }
 
     private void searchGuest() {
-        System.out.println("[Mencari Tamu]");
+        presenter.showSectionTitle("Mencari Tamu");
+
         String keyword = InputUtil.input("Nama (x Jika Batal)");
-        if (!keyword.equals("x")) {
-            presenter.showSearchResults(guestUseCase.searchGuests(keyword), keyword);
+        if (InputUtil.isCancel(keyword)) {
+            return;
         }
+
+        presenter.showSearchResults(guestUseCase.searchGuests(keyword), keyword);
     }
 
     private void removeGuest() {
-        System.out.println("[Menghapus Tamu]");
-        String strId = InputUtil.input("[ID Tamu] yang dihapus (x Jika Batal)");
-        if (strId.equals("x")) {
+        presenter.showSectionTitle("Menghapus Tamu");
+
+        String rawId = InputUtil.input("[ID Tamu] yang dihapus (x Jika Batal)");
+        if (InputUtil.isCancel(rawId)) {
             return;
         }
 
         try {
-            int id = parseId(strId);
+            int id = InputUtil.parseInt(rawId, "ID");
             guestUseCase.removeGuest(id);
             presenter.showRemoveSuccess();
         } catch (ValidationException e) {
-            presenter.showInvalidId();
+            presenter.showError(e.getMessage());
         } catch (EntityNotFoundException e) {
             presenter.showRemoveFailed(e.getId());
-        }
-    }
-
-    private int parseId(String value) throws ValidationException {
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            throw new ValidationException("ID harus berupa angka numerik");
         }
     }
 }

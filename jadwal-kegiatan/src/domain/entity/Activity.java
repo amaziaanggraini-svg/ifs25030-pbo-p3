@@ -30,20 +30,14 @@ public class Activity {
     }
 
     public void changeTitle(String title) {
-        if (title != null && !title.trim().isEmpty()) {
-            this.title = title;
-        }
+        this.title = title;
     }
 
     public void changeDay(String day) {
-        if (day != null && !day.trim().isEmpty()) {
-            this.day = day;
-        }
+        this.day = day;
     }
 
     public void changeTime(String time) {
-        if (time != null && !time.trim().isEmpty()) {
-            this.time = time;
-        }
+        this.time = time;
     }
 }

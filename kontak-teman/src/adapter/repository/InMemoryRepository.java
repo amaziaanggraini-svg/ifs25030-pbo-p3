@@ -7,8 +7,18 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * Base generic in-memory repository yang mengimplementasikan {@link IRepository}.
+ * Menghilangkan duplikasi kode penyimpanan list dan pencarian untuk berbagai entitas.
+ *
+ * @param <T>  tipe entitas domain
+ * @param <ID> tipe data identifier unik entitas
+ */
 public abstract class InMemoryRepository<T, ID> implements IRepository<T, ID> {
+    /** Penyimpanan data entitas di memori. */
     protected final List<T> data = new ArrayList<>();
+
+    /** Fungsi untuk mengekstrak ID dari objek entitas. */
     private final Function<T, ID> idExtractor;
 
     protected InMemoryRepository(Function<T, ID> idExtractor) {
@@ -17,6 +27,7 @@ public abstract class InMemoryRepository<T, ID> implements IRepository<T, ID> {
 
     @Override
     public List<T> findAll() {
+        // Salinan defensif agar data internal tidak termutasi dari luar
         return new ArrayList<>(data);
     }
 
@@ -40,11 +51,19 @@ public abstract class InMemoryRepository<T, ID> implements IRepository<T, ID> {
 
     @Override
     public void update(T entity) {
-        // In-memory reference update
+        ID id = idExtractor.apply(entity);
+        for (int i = 0; i < data.size(); i++) {
+            if (idExtractor.apply(data.get(i)).equals(id)) {
+                data.set(i, entity);
+                return;
+            }
+        }
     }
 
     @Override
     public List<T> findBy(Predicate<T> predicate) {
-        return data.stream().filter(predicate).toList();
+        return data.stream()
+                .filter(predicate)
+                .toList();
     }
 }

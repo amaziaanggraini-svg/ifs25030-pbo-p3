@@ -39,9 +39,15 @@ public class ActivityUseCase {
             throw new EntityNotFoundException(id);
         }
         Activity activity = found.get();
-        activity.changeTitle(title);
-        activity.changeDay(day);
-        activity.changeTime(time);
+        if (hasValue(title)) {
+            activity.changeTitle(title);
+        }
+        if (hasValue(day)) {
+            activity.changeDay(day);
+        }
+        if (hasValue(time)) {
+            activity.changeTime(time);
+        }
         activityRepository.update(activity);
     }
 
@@ -53,7 +59,7 @@ public class ActivityUseCase {
     }
 
     public List<Activity> searchActivities(String keyword) {
-        String lowerKeyword = keyword.toLowerCase();
+        String lowerKeyword = keyword == null ? "" : keyword.toLowerCase();
         return activityRepository.findBy(a -> a.getTitle().toLowerCase().contains(lowerKeyword));
     }
 
@@ -61,5 +67,10 @@ public class ActivityUseCase {
         return activityRepository.findAll().stream()
                 .sorted(option.comparator())
                 .toList();
+    }
+
+    /** Field opsional: null atau kosong berarti "tidak diubah". Aturan ini hanya ada di use case. */
+    private static boolean hasValue(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 }
